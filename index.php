@@ -1,37 +1,17 @@
 <?php
 
+use Src\Store;
+use Src\Api\PayPalApi;
+use Src\Adapters\BankAdapter;
+use Src\Api\BancoSantanderApi;
+use Src\Adapters\PayPalAdapter;
+
 require __DIR__ . '/public/app.php';
 
-use Src\Lamp;
-use Src\Document;
-use Src\Invoker\SwitchInvoker;
-use Src\Commands\Switch\OnCommand;
-use Src\Commands\Switch\OffCommand;
-use Src\Commands\Menu\OpenDocumentCommand;
-use Src\Commands\Menu\SaveDocumentCommand;
-use Src\Commands\Menu\CloseDocumentCommand;
-use Src\Invoker\MenuInvoker;
+$bankAdapter = new BankAdapter(new BancoSantanderApi);
+$paypalAdapter = new PayPalAdapter(new PayPalApi);
 
-// Example_1 {Lamp}
-$lamp = new Lamp;
-$onCommand = new OnCommand($lamp);
-$offCommand = new OffCommand($lamp);
+// Aqui puedes ir probando los adaptores que necesites
+$store = new Store($paypalAdapter);
 
-$switch = new SwitchInvoker($onCommand, $offCommand);
-
-$switch->on();
-$switch->off();
-
-echo '<hr>';
-
-// Example_2 {Document}
-$document = new Document;
-$openDocument = new OpenDocumentCommand($document);
-$closeDocument = new CloseDocumentCommand($document);
-$saveDocument = new SaveDocumentCommand($document);
-
-$menu = new MenuInvoker($openDocument, $closeDocument, $saveDocument);
-
-$menu->open();
-$menu->close();
-$menu->save();
+$store->process();
